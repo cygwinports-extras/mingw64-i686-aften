@@ -2,7 +2,15 @@ The implib for aften.exe clobbers the one from libaften :-(
 
 --- origsrc/aften-0.0.8/CMakeLists.txt	2007-09-07 20:51:47.000000000 -0500
 +++ src/aften-0.0.8/CMakeLists.txt	2013-12-09 00:31:07.937313000 -0600
-@@ -266,7 +266,9 @@ ADD_LIBRARY(aften_static STATIC ${LIBAFT
+@@ -24,6 +24,7 @@ INCLUDE(${CMAKE_MODULE_PATH}/CompilerVis
+ INCLUDE(${CMAKE_MODULE_PATH}/CompilerSIMD.cmake)
+ INCLUDE(${CMAKE_MODULE_PATH}/DetectCompiler.cmake)
+ 
++OPTION(UTILS "build command-line utilities" ON)
+ OPTION(SHARED "build shared Aften library" OFF)
+ OPTION(DOUBLE "build Aften with doubles instead of floats" OFF)
+ IF(DOUBLE)
+@@ -266,7 +267,9 @@ ADD_LIBRARY(aften_static STATIC ${LIBAFT
  #SET_TARGET_PROPERTIES(aften_static PROPERTIES OUTPUT_NAME aften)
  SET_TARGET_PROPERTIES(aften_static PROPERTIES LINKER_LANGUAGE C)
  SET_TARGET_PROPERTIES(aften_static PROPERTIES COMPILE_FLAGS -DAFTEN_BUILD_LIBRARY)
@@ -12,7 +20,25 @@ The implib for aften.exe clobbers the one from libaften :-(
  
  # building a separate static lib for the pcm audio decoder
  ADD_LIBRARY(aften_pcm STATIC ${PCM_SRCS})
-@@ -303,8 +305,9 @@ IF(BINDINGS_CXX)
+@@ -271,6 +274,7 @@ SET(INSTALL_TARGETS ${INSTALL_TARGETS} a
+ # building a separate static lib for the pcm audio decoder
+ ADD_LIBRARY(aften_pcm STATIC ${PCM_SRCS})
+ 
++IF(UTILS)
+ ADD_EXECUTABLE(aften_exe ${AFTEN_SRCS})
+ SET_TARGET_PROPERTIES(aften_exe PROPERTIES OUTPUT_NAME aften)
+ SET_TARGET_PROPERTIES(aften_exe PROPERTIES LINKER_LANGUAGE C)
+@@ -289,6 +293,9 @@ TARGET_LINK_LIBRARIES(wavrms aften_pcm $
+ ADD_EXECUTABLE(wavfilter util/wavfilter.c libaften/filter.c)
+ TARGET_LINK_LIBRARIES(wavfilter aften_pcm ${LIBM})
+ 
++SET(INSTALL_TARGETS ${INSTALL_TARGETS} aften_exe wavinfo wavrms wavfilter)
++ENDIF(UTILS)
++
+ IF(BINDINGS_CXX)
+   MESSAGE("## WARNING: The C++ bindings are only lightly tested. Feed-back appreciated. ##")
+   Project(Aften CXX)
+@@ -303,7 +310,7 @@ IF(BINDINGS_CXX)
    SET(INSTALL_HEADERS ${INSTALL_HEADERS} bindings/aftenxx.h)
  ENDIF(BINDINGS_CXX)
  
@@ -21,5 +47,3 @@ The implib for aften.exe clobbers the one from libaften :-(
          RUNTIME DESTINATION bin
          LIBRARY DESTINATION lib
          ARCHIVE DESTINATION lib)
-+INSTALL(TARGETS aften_exe wavinfo wavrms wavfilter RUNTIME DESTINATION bin)
- INSTALL(FILES ${INSTALL_HEADERS} libaften/aften.h libaften/aften-types.h DESTINATION include/aften)

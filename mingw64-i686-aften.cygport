@@ -14,11 +14,4 @@ SRC_URI="mirror://sourceforge/aften/aften-${VERSION}.tar.bz2"
 SRC_DIR="aften-${VERSION}"
 PATCH_URI="0.0.8-cmake-install.patch"
 
-CYGCMAKE_ARGS="-DSHARED=ON -DBINDINGS_CXX=ON"
-
-src_install() {
-	cd ${B}
-	cyginstall
-
-	rm -f ${D}${CROSS_BINDIR}/*.exe
-}
+CYGCMAKE_ARGS="-DSHARED=ON -DBINDINGS_CXX=ON -DUTILS=OFF"
