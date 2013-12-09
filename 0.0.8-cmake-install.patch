@@ -1,0 +1,25 @@
+The implib for aften.exe clobbers the one from libaften :-(
+
+--- origsrc/aften-0.0.8/CMakeLists.txt	2007-09-07 20:51:47.000000000 -0500
++++ src/aften-0.0.8/CMakeLists.txt	2013-12-09 00:31:07.937313000 -0600
+@@ -266,7 +266,9 @@ ADD_LIBRARY(aften_static STATIC ${LIBAFT
+ #SET_TARGET_PROPERTIES(aften_static PROPERTIES OUTPUT_NAME aften)
+ SET_TARGET_PROPERTIES(aften_static PROPERTIES LINKER_LANGUAGE C)
+ SET_TARGET_PROPERTIES(aften_static PROPERTIES COMPILE_FLAGS -DAFTEN_BUILD_LIBRARY)
++SET_TARGET_PROPERTIES(aften_static PROPERTIES OUTPUT_NAME "aften")
+ TARGET_LINK_LIBRARIES(aften_static ${LIBM} ${ADD_LIBS})
++SET(INSTALL_TARGETS ${INSTALL_TARGETS} aften_static)
+ 
+ # building a separate static lib for the pcm audio decoder
+ ADD_LIBRARY(aften_pcm STATIC ${PCM_SRCS})
+@@ -303,8 +305,9 @@ IF(BINDINGS_CXX)
+   SET(INSTALL_HEADERS ${INSTALL_HEADERS} bindings/aftenxx.h)
+ ENDIF(BINDINGS_CXX)
+ 
+-INSTALL(TARGETS ${INSTALL_TARGETS} aften_exe wavinfo wavrms wavfilter
++INSTALL(TARGETS ${INSTALL_TARGETS}
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION lib
+         ARCHIVE DESTINATION lib)
++INSTALL(TARGETS aften_exe wavinfo wavrms wavfilter RUNTIME DESTINATION bin)
+ INSTALL(FILES ${INSTALL_HEADERS} libaften/aften.h libaften/aften-types.h DESTINATION include/aften)
